@@ -1,184 +1,149 @@
-# Relatório da Paralelização de Avaliador de Logs
+# Log Analyzer Parallelization Report
 
-**Disciplina:** Programação Paralela  
-**Aluno(s):** Samuel Souza  
-**Turma:** Análise de Sistemas - 5º Semestre 
-**Professor:** Rafael
-**Data:** 20/03/2026  
-
----
-
-# 1. Descrição do Problema
-
-O problema consiste no processamento de grandes volumes de arquivos de log contendo informações operacionais. Cada arquivo deve ser analisado para extrair métricas como número de linhas, palavras, caracteres e contagem de palavras-chave relevantes ("erro", "warning", "info").
-
-O algoritmo implementado percorre todos os arquivos de uma pasta e, para cada arquivo, realiza a leitura linha a linha, contabilizando as métricas mencionadas. Trata-se de um algoritmo de varredura completa (full scan), com complexidade aproximadamente O(N), onde N representa o total de caracteres processados.
-
-O volume de dados utilizado nos testes foi:
-
-- 1000 arquivos
-- 10.000.000 linhas
-- 200.000.000 palavras
-- 1.366.663.305 caracteres
-
-O objetivo da paralelização foi reduzir o tempo total de execução distribuindo o processamento dos arquivos entre múltiplas threads, utilizando o modelo produtor-consumidor.
-
-**Questões que devem ser respondidas:**
-
-* Qual é o objetivo do programa?  
-Processar arquivos de log e extrair métricas agregadas para análise.
-
-* Qual o volume de dados processado?  
-Aproximadamente 10 milhões de linhas e mais de 1,3 bilhões de caracteres.
-
-* Qual algoritmo foi utilizado?  
-Varredura sequencial de arquivos com contagem de tokens e agregação.
-
-* Qual a complexidade aproximada do algoritmo?  
-O(N), sendo N o tamanho total dos dados.
+**Course:** Parallel Programming  
+**Student:** Samuel Souza  
+**Major:** Systems Analysis and Development - 5th Semester  
+**Date:** March 20, 2026  
 
 ---
 
-# 2. Ambiente Experimental
+## 1. Problem Description
 
-| Item                        | Descrição                     |
-| --------------------------- | ----------------------------- |
-| Processador                 | Intel(R) Core(TM) i5-12500   |
-| Número de núcleos           | 6                             |
-| Memória RAM                 | 16 GB                         |
-| Sistema Operacional         | Windows 11                    |
-| Linguagem utilizada         | Python 3                      |
-| Biblioteca de paralelização | threading, queue              |
-| Compilador / Versão         | Python 3.13                   |
+The problem consists of processing large volumes of operational log files. Each file must be analyzed to extract metrics such as the number of lines, words, characters, and counts of relevant keywords ("error", "warning", "info").
+
+The implemented algorithm iterates through all files in a directory. For each file, it reads line by line, tallying the mentioned metrics. This is a full-scan algorithm with a time complexity of approximately O(N), where N represents the total processed characters.
+
+**Data Volume Used:**
+* 1,000 files
+* 10,000,000 lines
+* 200,000,000 words
+* 1,366,663,305 characters
+
+The objective of parallelization was to reduce the total execution time by distributing the file processing workload across multiple threads using the Producer-Consumer model.
+
+**Key Questions Addressed:**
+* **What is the program's objective?** Process log files and extract aggregated metrics for analysis.
+* **What is the processed data volume?** Approximately 10 million lines and over 1.3 billion characters.
+* **Which algorithm was used?** Sequential file scanning with token counting and aggregation.
+* **What is the approximate time complexity?** O(N), where N is the total data size.
 
 ---
 
-# 3. Metodologia de Testes
+## 2. Experimental Environment
 
-Os tempos de execução foram medidos utilizando a função `time.perf_counter()`, garantindo maior precisão.
+| Item | Description |
+|---|---|
+| Processor | Intel Core i5-12500 |
+| Number of Cores | 6 |
+| RAM | 16 GB |
+| Operating System | Windows 11 |
+| Language | Python 3 |
+| Parallelization Library | `threading`, `queue` |
+| IDE / Version | Python 3.13 |
 
-Foi realizada uma execução para cada configuração de threads, considerando que o volume de dados é suficientemente grande para representar o comportamento do sistema.
+---
 
-### Configurações testadas
+## 3. Testing Methodology
 
-* 1 thread (versão serial)
+Execution times were measured using the `time.perf_counter()` function to ensure high precision. A single execution was performed for each thread configuration, given that the data volume was large enough to accurately represent the system's behavior.
+
+**Tested Configurations:**
+* 1 thread (Serial version)
 * 2 threads
 * 4 threads
 * 8 threads
 * 12 threads
 
-### Procedimento experimental
-
-* Cada configuração foi executada uma vez
-* Ambiente com baixa interferência externa
-* Máquina utilizada sem carga significativa durante os testes
-* Entrada fixa (mesmo conjunto de arquivos)
+**Experimental Procedure:**
+* Low external interference environment.
+* Machine utilized without significant background load during tests.
+* Fixed input data (same dataset of files for all runs).
 
 ---
 
-# 4. Resultados Experimentais
+## 4. Experimental Results
 
-| Nº Threads/Processos | Tempo de Execução (s) |
-| -------------------- | --------------------- |
-| 1                    | 114,67                |
-| 2                    | 58,12                 |
-| 4                    | 30,21                 |
-| 8                    | 18,54                 |
-| 12                   | 16,80                 |
+| Threads/Processes | Execution Time (s) |
+|---|---|
+| 1 | 114.67 |
+| 2 | 58.12 |
+| 4 | 30.21 |
+| 8 | 18.54 |
+| 12 | 16.80 |
 
 ---
 
-# 5. Cálculo de Speedup e Eficiência
+## 5. Speedup and Efficiency Calculation
 
-## Fórmulas Utilizadas
-
-### Speedup
-
+**Formulas Used:**
 
 Speedup(p) = T(1) / T(p)
+* **T(1)** = Serial execution time
+* **T(p)** = Execution time with p threads/processes
 
-
-Onde:
-
-* **T(1)** = tempo da execução serial  
-* **T(p)** = tempo com p threads/processos  
-
-### Eficiência
-
-
-Eficiência(p) = Speedup(p) / p
-
-
-Onde:
-
-* **p** = número de threads ou processos  
+Efficiency(p) = Speedup(p) / p
+* **p** = Number of threads or processes
 
 ---
 
-# 6. Tabela de Resultados
+## 6. Results Table
 
-| Threads/Processos | Tempo (s) | Speedup | Eficiência |
-| ----------------- | --------- | ------- | ---------- |
-| 1                 | 114,67    | 1,0     | 1,0        |
-| 2                 | 58,12     | 2,0     | 0,99       |
-| 4                 | 30,21     | 3,8     | 0,96       |
-| 8                 | 18,54     | 6,3     | 0,78       |
-| 12                | 16,80     | 6,9     | 0,57       |
-
----
-
-# 7. Gráfico de Tempo de Execução
-
-![Gráfico Tempo Execução](graficos/Tempo_de_Execução.png)
+| Threads/Processes | Time (s) | Speedup | Efficiency |
+|---|---|---|---|
+| 1 | 114.67 | 1.0 | 1.00 |
+| 2 | 58.12 | 2.0 | 0.99 |
+| 4 | 30.21 | 3.8 | 0.96 |
+| 8 | 18.54 | 6.3 | 0.78 |
+| 12 | 16.80 | 6.9 | 0.57 |
 
 ---
 
-# 8. Gráfico de Speedup
+## 7. Execution Time Chart
 
-![Gráfico Speedup](graficos/SPEEDUP.png)
-
----
-
-# 9. Gráfico de Eficiência
-
-![Gráfico Eficiência](graficos/Eficiência.png)
+![Execution Time Chart](graficos/Tempo_de_Execução.png)
 
 ---
 
-# 10. Análise dos Resultados
+## 8. Speedup Chart
 
-O speedup obtido foi próximo do ideal nas configurações iniciais, especialmente com 2 e 4 threads, onde houve quase duplicação e quadruplicação do desempenho em relação à execução serial.
-
-A aplicação apresentou boa escalabilidade até aproximadamente 4 threads. A partir desse ponto, o ganho de desempenho continuou, porém com redução progressiva na eficiência.
-
-A eficiência começou a cair de forma mais significativa a partir de 8 threads, indicando início de saturação dos recursos da máquina.
-
-Considerando que o processador possui 6 núcleos físicos, o uso de 8 e 12 threads ultrapassa a capacidade ideal de paralelismo, o que explica a redução da eficiência.
-
-Foi observado overhead de paralelização, causado por:
-
-* Criação e gerenciamento de threads
-* Sincronização no acesso à lista de resultados
-* Contenção de recursos de CPU e cache
-* Overhead do modelo produtor-consumidor
-
-Mesmo com essas limitações, o desempenho geral foi significativamente melhor do que a execução serial.
+![Speedup Chart](graficos/SPEEDUP.png)
 
 ---
 
-# 11. Conclusão
+## 9. Efficiency Chart
 
-O paralelismo trouxe um ganho significativo de desempenho, reduzindo o tempo de execução de aproximadamente 114,67 segundos para 16,80 segundos na melhor configuração.
+![Efficiency Chart](graficos/Eficiência.png)
 
-O melhor equilíbrio entre desempenho e eficiência foi observado com 4 threads, onde a eficiência ainda se manteve elevada e o ganho de desempenho foi expressivo.
+---
 
-O programa apresentou boa escalabilidade até o limite dos recursos físicos da máquina. Após esse ponto, o aumento do número de threads trouxe ganhos menores devido ao overhead e limitações do hardware.
+## 10. Results Analysis
 
-Melhorias possíveis incluem:
+The obtained speedup was close to ideal in the initial configurations, especially with 2 and 4 threads, yielding nearly double and quadruple performance compared to the serial execution.
 
-* Ajustar dinamicamente o número de threads com base nos núcleos disponíveis
-* Reduzir o custo de sincronização
-* Utilizar multiprocessing para explorar paralelismo real em CPU-bound
-* Otimizar o uso de memória e cache
+The application demonstrated excellent scalability up to approximately 4 threads. Beyond this point, performance gains continued but with a progressive reduction in efficiency.
 
-Conclui-se que a paralelização foi eficaz e trouxe ganhos substanciais quando corretamente dimensio
+Efficiency began dropping significantly at 8 threads, indicating the onset of machine resource saturation. Given that the processor has 6 physical cores, utilizing 8 and 12 threads exceeds the ideal hardware parallelism capacity, explaining the efficiency drop.
+
+**Observed Parallelization Overhead:**
+* Thread creation and lifecycle management.
+* Synchronization overhead when accessing the shared results list.
+* CPU cache and resource contention.
+* Producer-Consumer queue management overhead.
+
+Despite these limitations, the overall performance of the multithreaded architecture heavily outperformed the serial approach.
+
+---
+
+## 11. Conclusion
+
+Parallelization provided a substantial performance boost, reducing the execution time from 114.67 seconds to 16.80 seconds in the optimal configuration. 
+
+The best balance between sheer performance and thread efficiency was observed at 4 threads, where efficiency remained high while delivering significant time savings. The program scaled well up to the physical limits of the hardware. 
+
+**Future Improvements:**
+* Dynamically adjust the thread count based on available CPU cores at runtime.
+* Reduce lock/synchronization costs during data aggregation.
+* Implement `multiprocessing` to bypass the Global Interpreter Lock (GIL) and exploit true CPU-bound parallelism.
+* Optimize memory and cache utilization during large file reads.
+
+In conclusion, the implementation was highly effective, proving the power of concurrent processing for large-scale data ingestion tasks.
